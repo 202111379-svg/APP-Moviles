@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "APP-Moviles",
-    "slug": "APP-Moviles",
+    "name": "appmoviles",
+    "slug": "appmoviles",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
