@@ -1,38 +1,92 @@
-import React from 'react';
-import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
+// app/(tabs)/explore.tsx
+import React, { useMemo } from 'react';
+import { View, Text, Button, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons'; // Importando los íconos
+import { Ionicons } from '@expo/vector-icons';
+
+// >>> Cambia esto por el correo configurado en tu Pixel 3
+const RECIPIENT_EMAIL = 'tuusuario@gmail.com';
 
 export default function Explore() {
   const router = useRouter();
+
+  const conferencia = useMemo(() => {
+    const now = new Date();
+    const conf = new Date(now);
+    if (now.getHours() >= 18) conf.setDate(conf.getDate() + 1);
+    const fmt = (d: Date) =>
+      d.toLocaleDateString('es-PE', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
+    const esHoy =
+      now.toDateString() === new Date(conf).toDateString() && now.getHours() < 18;
+    return { fecha: fmt(conf), esHoy };
+  }, []);
+
+  const onPressBell = () => {
+    Alert.alert(
+      'Notificación',
+      `📣 Hay conferencia ${conferencia.esHoy ? 'HOY' : 'MAÑANA'}\n🗓️ ${conferencia.fecha}\n⏰ 7:00 p.m.`
+    );
+  };
+
+  const onPressMail = async () => {
+    try {
+      const MailComposer = await import('expo-mail-composer');
+      const isAvail = await MailComposer.isAvailableAsync();
+      if (!isAvail) {
+        Alert.alert('Correo', 'No hay app de correo disponible en este dispositivo.');
+        return;
+      }
+      await MailComposer.composeAsync({
+        recipients: [RECIPIENT_EMAIL], // << el correo de tu Pixel 3
+        subject: 'Prueba de notificación',
+        body: 'Hola, este es un test enviado desde la app.',
+      });
+    } catch {
+      Alert.alert('Correo', 'No se pudo abrir el compositor de correo.');
+    }
+  };
 
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          {/* Logo simulado con las iniciales */}
-          <Text style={styles.logo}>J</Text>
-          <Text style={styles.code}>202111359</Text>
+          <View style={styles.logoCircle}>
+            <Text style={styles.logo}>J</Text>
+          </View>
+          <Text style={styles.code}>202111368</Text>
         </View>
+
         <View style={styles.headerRight}>
-          {/* Íconos */}
           <TouchableOpacity style={styles.iconButton}>
-            <Ionicons name="person-outline" size={24} color="black" />
+            <Ionicons name="person-outline" size={24} color="#fff" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.iconButton}>
-            <Ionicons name="mail-outline" size={24} color="black" />
+
+          {/* Logo de correo */}
+          <TouchableOpacity style={styles.iconButton} onPress={onPressMail}>
+            <Ionicons name="mail-outline" size={24} color="#fff" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.iconButton}>
-            <Ionicons name="notifications-outline" size={24} color="black" />
+
+          {/* Campana con badge */}
+          <TouchableOpacity style={styles.iconButton} onPress={onPressBell}>
+            <View>
+              <Ionicons name="notifications-outline" size={24} color="#fff" />
+              <View style={styles.badge} />
+            </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => { /* Acción de ayuda */ }}>
+
+          <TouchableOpacity onPress={() => {}}>
             <Text style={styles.helpText}>Ayuda →</Text>
           </TouchableOpacity>
         </View>
       </View>
 
-      {/* Restante del contenido */}
+      {/* Contenido */}
       <View style={styles.classContainer}>
         <Text style={styles.classTitle}>Ahora</Text>
 
@@ -43,61 +97,68 @@ export default function Explore() {
         </View>
 
         <View style={styles.classItem}>
-          <Text style={styles.className}>Curso: Simulacion De S...</Text>
+          <Text style={styles.className}>Curso: Simulación de S...</Text>
           <Text style={styles.classStatus}>Virtual</Text>
           <Text style={styles.classTime}>5:00 - 7:40</Text>
         </View>
 
-        <Button title="Ver mi horario" onPress={() => {}} />
+        <Button title="Ver mi horario" onPress={() => router.push('/(tabs)/horario')} />
       </View>
 
-      {/* Announcements Section */}
+      {/* Anuncios */}
       <View style={styles.announcementContainer}>
         <Text style={styles.announcementTitle}>Anuncios</Text>
-        <Text style={styles.announcementText}>
-          ¡Ahorra En Tus Cuotas!
-        </Text>
+        <Text style={styles.announcementText}>¡Ahorra En Tus Cuotas!</Text>
         <Text style={styles.announcementSubtext}>
-          Pagando Hasta 1 Día Antes Del Vencimiento De Cada Cuota
+          Pagando hasta 1 día antes del vencimiento de cada cuota
         </Text>
-        <Button title="Conoce Los Descuentos Y El Calendario De Pagos" onPress={() => {}} />
+        <Button title="Ver descuentos y calendario" onPress={() => {}} />
       </View>
 
-      {/* Navigation Buttons */}
+      {/* Navegación inferior */}
       <View style={styles.navContainer}>
-        <TouchableOpacity style={styles.navButton} onPress={() => router.push('/')}>
+        <TouchableOpacity
+          style={styles.navButton}
+          onPress={() => router.replace('/(tabs)/explore')}
+        >
           <Ionicons name="home-outline" size={24} color="white" />
           <Text style={styles.navButtonText}>Inicio</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.navButton} onPress={() => router.push('/horario')}>
+        <TouchableOpacity
+          style={styles.navButton}
+          onPress={() => router.push('/(tabs)/horario')}
+        >
           <Ionicons name="calendar-outline" size={24} color="white" />
-          <Text style={styles.navButtonText}>Ver Horario</Text>
+          <Text style={styles.navButtonText}>Horario</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.navButton} onPress={() => router.push('/curso')}>
+        <TouchableOpacity
+          style={styles.navButton}
+          onPress={() => router.push('/(tabs)/Curso')}
+        >
           <Ionicons name="book-outline" size={24} color="white" />
           <Text style={styles.navButtonText}>Curso</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.navButton} onPress={() => router.push('/pagos')}>
+        <TouchableOpacity
+          style={styles.navButton}
+          onPress={() => router.push('/(tabs)/pagos')}
+        >
           <Ionicons name="cash-outline" size={24} color="white" />
           <Text style={styles.navButtonText}>Pagos</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Logout Button */}
-      <Button title="Cerrar sesión" onPress={() => router.push('/')} />
+      {/* Logout */}
+      <Button title="Cerrar sesión" onPress={() => router.replace('/')} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#f5f5f5',
-  },
+  container: { flex: 1, padding: 20, backgroundColor: '#f5f5f5' },
+
   header: {
     flexDirection: 'row',
     backgroundColor: '#4CAF50',
@@ -107,57 +168,38 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     justifyContent: 'space-between',
   },
-  headerLeft: {
-    flexDirection: 'row',
+  headerLeft: { flexDirection: 'row', alignItems: 'center' },
+
+  logoCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255,255,255,0.25)',
     alignItems: 'center',
-  },
-  logo: {
-    fontSize: 24,
-    color: '#fff',
-    fontWeight: 'bold',
+    justifyContent: 'center',
     marginRight: 10,
   },
-  code: {
-    fontSize: 16,
-    color: '#fff',
+  logo: { fontSize: 18, color: '#fff', fontWeight: 'bold' },
+
+  code: { fontSize: 16, color: '#fff' },
+  headerRight: { flexDirection: 'row', alignItems: 'center' },
+  iconButton: { marginLeft: 10 },
+  helpText: { fontSize: 16, color: '#fff', marginLeft: 10 },
+
+  badge: {
+    position: 'absolute',
+    right: -2,
+    top: -2,
+    width: 10,
+    height: 10,
+    backgroundColor: '#00e676',
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#4CAF50',
   },
-  headerCenter: {
-    alignItems: 'center',
-    flex: 1,
-  },
-  welcome: {
-    fontSize: 20,
-    color: '#fff',
-    fontWeight: 'bold',
-    marginTop: 10,
-    textAlign: 'right', // Alineado a la derecha
-  },
-  email: {
-    fontSize: 16,
-    color: '#fff',
-    marginTop: 5,
-    textAlign: 'right', // Alineado a la derecha
-  },
-  headerRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  iconButton: {
-    marginLeft: 10,
-  },
-  helpText: {
-    fontSize: 16,
-    color: '#fff',
-    marginLeft: 10,
-  },
-  classContainer: {
-    marginBottom: 30,
-  },
-  classTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
+
+  classContainer: { marginBottom: 30 },
+  classTitle: { fontSize: 20, fontWeight: 'bold', marginBottom: 10 },
   classItem: {
     backgroundColor: '#fff',
     padding: 10,
@@ -166,34 +208,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ddd',
   },
-  className: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  classStatus: {
-    color: 'green',
-  },
-  classTime: {
-    fontSize: 14,
-    color: '#888',
-  },
-  announcementContainer: {
-    marginBottom: 30,
-  },
-  announcementTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  announcementText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#f60',
-  },
-  announcementSubtext: {
-    fontSize: 14,
-    color: '#888',
-  },
+  className: { fontSize: 16, fontWeight: 'bold' },
+  classStatus: { color: 'green' },
+  classTime: { fontSize: 14, color: '#888' },
+
+  announcementContainer: { marginBottom: 30 },
+  announcementTitle: { fontSize: 20, fontWeight: 'bold', marginBottom: 10 },
+  announcementText: { fontSize: 16, fontWeight: 'bold', color: '#f60' },
+  announcementSubtext: { fontSize: 14, color: '#888' },
+
   navContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -201,12 +224,6 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     borderRadius: 8,
   },
-  navButton: {
-    alignItems: 'center',
-  },
-  navButtonText: {
-    color: '#fff',
-    fontSize: 12,
-    marginTop: 5,
-  },
+  navButton: { alignItems: 'center' },
+  navButtonText: { color: '#fff', fontSize: 12, marginTop: 5 },
 });

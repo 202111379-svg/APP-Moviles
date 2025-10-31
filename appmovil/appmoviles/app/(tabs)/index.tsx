@@ -4,20 +4,19 @@ import { useRouter } from 'expo-router';
 
 export default function Index() {
   const router = useRouter();
-  const [usuario, setUsuario] = useState('');
-  const [contrasena, setContrasena] = useState('');
+  const [usuario, setUsuario] = useState<string>('');
+  const [contrasena, setContrasena] = useState<string>('');
 
   const handleLogin = () => {
     if (usuario === '202111368' && contrasena === '1234') {
-      router.push('/explore'); 
+      router.replace('/(tabs)/explore'); // evita volver al login con "back"
     } else {
-      Alert.alert('Error', 'Usuario o contraseña incorrectos');
+      Alert.alert('Errorr', 'Usuario o contraseña incorrectos');
     }
   };
 
   return (
-    <ImageBackground 
-      source={require('../../assets/images/img.jpg')}  // Ruta corregida
+    <ImageBackground source={require('../../assets/images/img.jpg')}
       style={styles.background}
     >
       <View style={styles.container}>
@@ -44,29 +43,16 @@ export default function Index() {
 }
 
 const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    justifyContent: 'center', // Centra el contenido dentro del background
-    alignItems: 'center',     // Centra el contenido dentro del background
-  },
+  background: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   container: {
     width: '80%',
     padding: 20,
     borderRadius: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.7)', // Fondo semitransparente
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
     alignItems: 'center',
   },
-  title: {
-    fontSize: 24,
-    marginBottom: 20,
-    fontWeight: 'bold',
-  },
+  title: { fontSize: 24, marginBottom: 20, fontWeight: 'bold' },
   input: {
-    width: '100%',
-    padding: 10,
-    borderWidth: 1,
-    marginBottom: 10,
-    borderRadius: 5,
-    backgroundColor: '#fff',
+    width: '100%', padding: 10, borderWidth: 1, marginBottom: 10, borderRadius: 5, backgroundColor: '#fff',
   },
 });
