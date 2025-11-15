@@ -112,7 +112,7 @@ export default function Explore() {
         <Text style={styles.announcementSubtext}>
           Pagando hasta 1 día antes del vencimiento de cada cuota
         </Text>
-        <Button title="Ver descuentos y calendario" onPress={() => {}} />
+        <Button title="Ver descuentos y calendario" onPress={() => router.push('/(tabs)/calendario')} />
       </View>
 
       {/* Navegación inferior */}
