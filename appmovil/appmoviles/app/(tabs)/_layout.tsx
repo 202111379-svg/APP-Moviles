@@ -37,6 +37,13 @@ export default function TabLayout() {
         href: null,
      }}
 />
+<Tabs.Screen
+  name="notas"
+  options={{
+    title: 'Notas',
+    href: null, // oculta el tab pero permite navegar
+  }}
+/>
     </Tabs>
   );
 }

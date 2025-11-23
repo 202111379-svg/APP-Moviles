@@ -104,6 +104,14 @@ export default function Explore() {
 
         <Button title="Ver mi horario" onPress={() => router.push('/(tabs)/horario')} />
       </View>
+        {/* NUEVO BOTÓN: NOTAS */}
+        <View style={{ marginTop: 10 }}>
+          <Button
+          title="Ver mis Notas"
+          onPress={() => router.push('/(tabs)/notas')}
+         />
+        </View>
+      
 
       {/* Anuncios */}
       <View style={styles.announcementContainer}>
