@@ -3,29 +3,41 @@ import { View, Text, StyleSheet, Button, TouchableOpacity, ScrollView, Alert } f
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
-/* ---------- Datos ---------- */
 type Dia = 'Lunes'|'Martes'|'Miercoles'|'Jueves'|'Viernes'|'Sabado';
+
 const HORAS = [
   '08:00','09:00','10:00','11:00','12:00',
   '13:00','14:00','15:00','16:00','17:00',
   '18:00','19:00','20:00','21:00','22:00',
 ];
+
 const HORARIO: Record<Dia, Record<string, { curso:string; color:string }>> = {
-  Lunes: {  '17:00': { curso:'IF-0801 T',  color:'#43a047' },
-            '19:00': { curso:'IF-0903 L',  color:'#c0ca33' },
-            '21:00': { curso:'IF-0801 TA', color:'#26a69a' } },
-  Martes: { '18:00': { curso:'IF-0904 TA', color:'#1e88e5' },
-            '20:00': { curso:'IF-0903 T',  color:'#c0ca33' } },
-  Miercoles: { '17:00': { curso:'IF-0901 TA', color:'#43a047' } },
-  Jueves: { '19:00': { curso:'IF-0904 T',  color:'#1e88e5' },
-            '20:00': { curso:'IF-0904 TA', color:'#1e88e5' } },
-  Viernes: { '19:00': { curso:'IF-0802 TA', color:'#43a047' } },
-  Sabado: { '08:00': { curso:'IF-0802 T',  color:'#43a047' },
-            '10:00': { curso:'IF-1103 T',  color:'#1e88e5' },
-            '12:00': { curso:'IF-1103 TA', color:'#1e88e5' } },
+  Lunes: {  
+    '17:00': { curso:'IF-0801 T',  color:'#43a047' },
+    '19:00': { curso:'IF-0903 L',  color:'#c0ca33' },
+    '21:00': { curso:'IF-0801 TA', color:'#26a69a' } 
+  },
+  Martes: { 
+    '18:00': { curso:'IF-0904 TA', color:'#1e88e5' },
+    '20:00': { curso:'IF-0903 T',  color:'#c0ca33' } 
+  },
+  Miercoles: { 
+    '17:00': { curso:'IF-0901 TA', color:'#43a047' } 
+  },
+  Jueves: { 
+    '19:00': { curso:'IF-0904 T',  color:'#1e88e5' },
+    '20:00': { curso:'IF-0904 TA', color:'#1e88e5' } 
+  },
+  Viernes: { 
+    '19:00': { curso:'IF-0802 TA', color:'#43a047' } 
+  },
+  Sabado: { 
+    '08:00': { curso:'IF-0802 T',  color:'#43a047' },
+    '10:00': { curso:'IF-1103 T',  color:'#1e88e5' },
+    '12:00': { curso:'IF-1103 TA', color:'#1e88e5' } 
+  },
 };
 
-/* ---------- Generador HTML SOLO del horario (L–S) ---------- */
 function buildPdfHtmlSchedule() {
   const dias: Dia[] = ['Lunes','Martes','Miercoles','Jueves','Viernes','Sabado'];
   const gridHeight = 1200;
@@ -82,18 +94,14 @@ function buildPdfHtmlSchedule() {
 }
 
 /* ---------- Componente ---------- */
-const CELL_H = 44;
-
 export default function Horario() {
   const router = useRouter();
   const dias: Dia[] = useMemo(() => ['Lunes','Martes','Miercoles','Jueves','Viernes','Sabado'], []);
 
-  // Import dinámico de expo-print y diálogo nativo (sin abrir navegador)
   const handlePrintSchedule = async () => {
     try {
       const html = buildPdfHtmlSchedule();
       const Print = await import('expo-print');
-      // Abre el visor/diálogo de impresión del sistema
       await Print.printAsync({ html });
     } catch (e) {
       Alert.alert('Error', 'No se pudo generar/abrir el PDF.');
@@ -102,10 +110,12 @@ export default function Horario() {
 
   return (
     <ScrollView style={styles.screen} contentContainerStyle={{ paddingBottom: 24 }}>
+      
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.logo}>J</Text>
         <Text style={styles.code}>202111368</Text>
+
         <TouchableOpacity onPress={() => router.push('/(tabs)/explore')} style={styles.backBtn}>
           <Ionicons name="arrow-back-outline" size={18} color="#fff" />
           <Text style={styles.backText}>Volver</Text>
@@ -114,9 +124,10 @@ export default function Horario() {
 
       <Text style={styles.title}>Ver Horario</Text>
 
-      {/* --- Horario con scroll horizontal --- */}
+      {/* Horario Scrollable */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 20 }}>
         <View style={styles.tableWrap}>
+          
           {/* Columna de horas */}
           <View style={styles.hoursCol}>
             {HORAS.slice(0, -1).map(h => (
@@ -124,14 +135,14 @@ export default function Horario() {
             ))}
           </View>
 
-          {/* Tabla principal */}
+          {/* Tabla */}
           <View style={styles.table}>
-            {/* Cabecera de días */}
+            {/* Header */}
             <View style={styles.headRow}>
               {dias.map(d => <Text key={d} style={styles.headCell}>{d}</Text>)}
             </View>
 
-            {/* Cuerpo: columna por día */}
+            {/* Filas */}
             <View style={styles.bodyRow}>
               {dias.map(dia => (
                 <View key={dia} style={styles.col}>
@@ -150,38 +161,89 @@ export default function Horario() {
               ))}
             </View>
           </View>
+
         </View>
       </ScrollView>
 
+      <Button title="Imprimir horario (PDF)" onPress={handlePrintSchedule} />
 
-      <View style={{ marginTop: 12 }}>
-        <Button title="Imprimir horario (PDF)" onPress={handlePrintSchedule} />
-      </View>
     </ScrollView>
   );
 }
 
-/* ---------- Estilos ---------- */
 const styles = StyleSheet.create({
-  screen:{ flex:1, backgroundColor:'#f5f5f5', padding:20 },
+  screen:{ flex:1, backgroundColor:'#f5f5f5', padding:14 },
 
-  header:{ flexDirection:'row', alignItems:'center', justifyContent:'space-between', marginBottom:12 },
-  logo:{ fontSize:30, color:'#4CAF50', fontWeight:'bold' },
-  code:{ fontSize:18, color:'#4CAF50' },
-  backBtn:{ flexDirection:'row', backgroundColor:'#2E7D32', paddingHorizontal:12, paddingVertical:8, borderRadius:8, alignItems:'center' },
-  backText:{ color:'#fff', marginLeft:6, fontWeight:'bold' },
+  header:{ flexDirection:'row', alignItems:'center', justifyContent:'space-between', marginBottom:10 },
+  logo:{ fontSize:24, color:'#4CAF50', fontWeight:'bold' },
+  code:{ fontSize:14, color:'#4CAF50' },
 
-  title:{ fontSize:26, fontWeight:'bold', marginBottom:8 },
+  backBtn:{
+    flexDirection:'row',
+    backgroundColor:'#2E7D32',
+    paddingHorizontal:10,
+    paddingVertical:6,
+    borderRadius:6,
+    alignItems:'center'
+  },
 
-  /* Horario */
+  backText:{ color:'#fff', marginLeft:4, fontWeight:'bold', fontSize:12 },
+
+  title:{ fontSize:20, fontWeight:'bold', marginBottom:6 },
+
   tableWrap:{ flexDirection:'row' },
-  hoursCol:{ width:54, marginTop:34 },
-  hourLabel:{ height:44, textAlign:'right', paddingRight:6, color:'#777' },
-  table:{ borderWidth:1, borderColor:'#cfd8dc', borderRadius:8, overflow:'hidden' },
-  headRow:{ flexDirection:'row', backgroundColor:'#f1f3f4', borderBottomWidth:1, borderColor:'#cfd8dc' },
-  headCell:{ width:120, padding:8, textAlign:'center', fontWeight:'600' },
+
+  hoursCol:{ width:44, marginTop:28 },
+
+  hourLabel:{ 
+    height:32, 
+    textAlign:'right', 
+    paddingRight:4, 
+    color:'#777',
+    fontSize:11
+  },
+
+  table:{ 
+    borderWidth:1, 
+    borderColor:'#cfd8dc',
+    borderRadius:8,
+    overflow:'hidden',
+    transform:[{ scale:0.86 }]
+  },
+
+  headRow:{ 
+    flexDirection:'row',
+    backgroundColor:'#f1f3f4',
+    borderBottomWidth:1,
+    borderColor:'#cfd8dc',
+    height:32,
+    alignItems:'center'
+  },
+
+  headCell:{
+    flex:1,
+    textAlign:'center',
+    fontWeight:'bold',
+    fontSize:11,
+    color:'#333',
+  },
+
   bodyRow:{ flexDirection:'row' },
-  col:{ width:120, backgroundColor:'#fff' },
-  cell:{ height:44, borderBottomWidth:1, borderColor:'#eceff1', alignItems:'center', justifyContent:'center' },
-  cellText:{ color:'#fff', fontWeight:'700', fontSize:12, textAlign:'center' },
+
+  col:{ flex:1 },
+
+  cell:{
+    height:32,
+    borderWidth:1,
+    borderColor:'#ddd',
+    justifyContent:'center',
+    alignItems:'center',
+    padding:2
+  },
+
+  cellText:{
+    color:'#fff',
+    fontWeight:'bold',
+    fontSize:10
+  }
 });

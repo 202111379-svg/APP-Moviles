@@ -1,58 +1,19 @@
-// app/(tabs)/explore.tsx
-import React, { useMemo } from 'react';
-import { View, Text, Button, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import React from 'react';
+import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-
-// >>> Cambia esto por el correo configurado en tu Pixel 3
-const RECIPIENT_EMAIL = 'tuusuario@gmail.com';
 
 export default function Explore() {
   const router = useRouter();
 
-  const conferencia = useMemo(() => {
-    const now = new Date();
-    const conf = new Date(now);
-    if (now.getHours() >= 18) conf.setDate(conf.getDate() + 1);
-    const fmt = (d: Date) =>
-      d.toLocaleDateString('es-PE', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      });
-    const esHoy =
-      now.toDateString() === new Date(conf).toDateString() && now.getHours() < 18;
-    return { fecha: fmt(conf), esHoy };
-  }, []);
-
+  // 👉 La campana ahora solo navega a Curso.tsx
   const onPressBell = () => {
-    Alert.alert(
-      'Notificación',
-      `📣 Hay conferencia ${conferencia.esHoy ? 'HOY' : 'MAÑANA'}\n🗓️ ${conferencia.fecha}\n⏰ 7:00 p.m.`
-    );
-  };
-
-  const onPressMail = async () => {
-    try {
-      const MailComposer = await import('expo-mail-composer');
-      const isAvail = await MailComposer.isAvailableAsync();
-      if (!isAvail) {
-        Alert.alert('Correo', 'No hay app de correo disponible en este dispositivo.');
-        return;
-      }
-      await MailComposer.composeAsync({
-        recipients: [RECIPIENT_EMAIL], // << el correo de tu Pixel 3
-        subject: 'Prueba de notificación',
-        body: 'Hola, este es un test enviado desde la app.',
-      });
-    } catch {
-      Alert.alert('Correo', 'No se pudo abrir el compositor de correo.');
-    }
+    router.push('/(tabs)/Curso');
   };
 
   return (
     <View style={styles.container}>
+      
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
@@ -67,12 +28,7 @@ export default function Explore() {
             <Ionicons name="person-outline" size={24} color="#fff" />
           </TouchableOpacity>
 
-          {/* Logo de correo */}
-          <TouchableOpacity style={styles.iconButton} onPress={onPressMail}>
-            <Ionicons name="mail-outline" size={24} color="#fff" />
-          </TouchableOpacity>
-
-          {/* Campana con badge */}
+          {/* 🔔 Campana redirige a Curso */}
           <TouchableOpacity style={styles.iconButton} onPress={onPressBell}>
             <View>
               <Ionicons name="notifications-outline" size={24} color="#fff" />
@@ -80,7 +36,7 @@ export default function Explore() {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => {}}>
+          <TouchableOpacity>
             <Text style={styles.helpText}>Ayuda →</Text>
           </TouchableOpacity>
         </View>
@@ -155,6 +111,7 @@ export default function Explore() {
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, backgroundColor: '#f5f5f5' },
