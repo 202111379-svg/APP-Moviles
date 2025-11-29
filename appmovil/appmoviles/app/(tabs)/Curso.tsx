@@ -26,6 +26,20 @@ const CursosScreen = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <View style={styles.headerCard}>
+        <View style={styles.headerLeft}>
+          <View style={styles.logoCircle}>
+            <Text style={styles.logoText}>J</Text>
+          </View>
+          <Text style={styles.studentCode}>202121053</Text>
+        </View>
+        <Ionicons name="book-outline" size={26} color="#fff" />
+      </View>
+
+      <View style={styles.headerTitleContainer}>
+        <Text style={styles.headerTitle}>CURSOS</Text>
+      </View>
+
       {cursos.map((curso, index) => (
         <TouchableOpacity
           key={index}
@@ -65,6 +79,51 @@ const styles = StyleSheet.create({
     padding: 15,
     backgroundColor: '#dcdcdc',
   },
+
+  headerCard: {
+    backgroundColor: '#4CAF50',
+    borderRadius: 6,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 12,
+    marginBottom: 4,
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  logoCircle: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: 'rgba(255,255,255,0.25)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 8,
+  },
+  logoText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  studentCode: {
+    color: '#fff',
+    fontSize: 14,
+  },
+  headerTitleContainer: {
+    backgroundColor: '#4CAF50',
+    borderBottomLeftRadius: 6,
+    borderBottomRightRadius: 6,
+    paddingVertical: 6,
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  headerTitle: {
+    color: '#000',
+    fontWeight: 'bold',
+    fontSize: 15,
+  },
+
   card: {
     backgroundColor: '#e0e0e0',
     borderRadius: 10,
@@ -99,6 +158,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#000',
   },
+
   backButton: {
     marginTop: 10,
     marginBottom: 20,
