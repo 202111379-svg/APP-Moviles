@@ -1,59 +1,21 @@
-// app/(tabs)/explore.tsx
-import React, { useMemo } from 'react';
+import React from 'react';
 import { View, Text, Button, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
-// >>> Cambia esto por el correo configurado en tu Pixel 3
-const RECIPIENT_EMAIL = 'tuusuario@gmail.com';
-
 export default function Explore() {
   const router = useRouter();
 
-  const conferencia = useMemo(() => {
-    const now = new Date();
-    const conf = new Date(now);
-    if (now.getHours() >= 18) conf.setDate(conf.getDate() + 1);
-    const fmt = (d: Date) =>
-      d.toLocaleDateString('es-PE', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      });
-    const esHoy =
-      now.toDateString() === new Date(conf).toDateString() && now.getHours() < 18;
-    return { fecha: fmt(conf), esHoy };
-  }, []);
-
   const onPressBell = () => {
-    Alert.alert(
-      'Notificación',
-      `📣 Hay conferencia ${conferencia.esHoy ? 'HOY' : 'MAÑANA'}\n🗓️ ${conferencia.fecha}\n⏰ 7:00 p.m.`
-    );
+    router.push('/(tabs)/notificaciones');
   };
 
-  const onPressMail = async () => {
-    try {
-      const MailComposer = await import('expo-mail-composer');
-      const isAvail = await MailComposer.isAvailableAsync();
-      if (!isAvail) {
-        Alert.alert('Correo', 'No hay app de correo disponible en este dispositivo.');
-        return;
-      }
-      await MailComposer.composeAsync({
-        recipients: [RECIPIENT_EMAIL], // << el correo de tu Pixel 3
-        subject: 'Prueba de notificación',
-        body: 'Hola, este es un test enviado desde la app.',
-      });
-    } catch {
-      Alert.alert('Correo', 'No se pudo abrir el compositor de correo.');
-    }
+  const onPressMail = () => {
+    Alert.alert('Correo', 'Funcionalidad de correo próximamente.');
   };
 
   return (
     <View style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <View style={styles.logoCircle}>
@@ -67,12 +29,10 @@ export default function Explore() {
             <Ionicons name="person-outline" size={24} color="#fff" />
           </TouchableOpacity>
 
-          {/* Logo de correo */}
           <TouchableOpacity style={styles.iconButton} onPress={onPressMail}>
             <Ionicons name="mail-outline" size={24} color="#fff" />
           </TouchableOpacity>
 
-          {/* Campana con badge */}
           <TouchableOpacity style={styles.iconButton} onPress={onPressBell}>
             <View>
               <Ionicons name="notifications-outline" size={24} color="#fff" />
@@ -104,26 +64,26 @@ export default function Explore() {
 
         <Button title="Ver mi horario" onPress={() => router.push('/(tabs)/horario')} />
       </View>
-        {/* NUEVO BOTÓN: NOTAS */}
-        <View style={{ marginTop: 10 }}>
-          <Button
+
+      <View style={{ marginTop: 10 }}>
+        <Button
           title="Ver mis Notas"
           onPress={() => router.push('/(tabs)/notas')}
-         />
-        </View>
-      
+        />
+      </View>
 
-      {/* Anuncios */}
       <View style={styles.announcementContainer}>
         <Text style={styles.announcementTitle}>Anuncios</Text>
         <Text style={styles.announcementText}>¡Ahorra En Tus Cuotas!</Text>
         <Text style={styles.announcementSubtext}>
           Pagando hasta 1 día antes del vencimiento de cada cuota
         </Text>
-        <Button title="Ver descuentos y calendario" onPress={() => router.push('/(tabs)/calendario')} />
+        <Button
+          title="Ver descuentos y calendario"
+          onPress={() => router.push('/(tabs)/calendario')}
+        />
       </View>
 
-      {/* Navegación inferior */}
       <View style={styles.navContainer}>
         <TouchableOpacity
           style={styles.navButton}
@@ -158,7 +118,7 @@ export default function Explore() {
         </TouchableOpacity>
       </View>
 
-      {/* Logout */}
+      
       <Button title="Cerrar sesión" onPress={() => router.replace('/')} />
     </View>
   );

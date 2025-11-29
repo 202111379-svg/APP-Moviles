@@ -9,7 +9,7 @@ export default function Index() {
 
   const handleLogin = () => {
     if (usuario === '202111368' && contrasena === '1234') {
-      router.replace('/(tabs)/explore'); // evita volver al login con "back"
+      router.replace('/(tabs)/explore'); 
     } else {
       Alert.alert('Errorr', 'Usuario o contraseña incorrectos');
     }

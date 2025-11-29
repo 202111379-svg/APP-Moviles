@@ -41,7 +41,7 @@ export default function TabLayout() {
   name="notas"
   options={{
     title: 'Notas',
-    href: null, // oculta el tab pero permite navegar
+    href: null,
   }}
 />
     </Tabs>

@@ -16,7 +16,6 @@ export default function CarnetScreen() {
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.page}>
           
-          {/* Barra verde superior */}
           <View style={styles.header}>
             <View style={styles.headerLeft}>
               <View style={styles.circle}>
