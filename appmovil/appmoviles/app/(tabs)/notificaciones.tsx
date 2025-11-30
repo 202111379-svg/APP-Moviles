@@ -1,185 +1,160 @@
-import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import React from "react";
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
-const diasSemana = ['DOMINGO', 'LUNES', 'MARTES', 'MIÉRCOLES', 'JUEVES', 'VIERNES', 'SÁBADO'];
-
-export default function NotificacionesScreen() {
+export default function TareasScreen() {
   const router = useRouter();
-  const params = useLocalSearchParams();
-  const nombreCurso = (params.nombre as string) || 'Curso seleccionado';
-  const horarioCurso = (params.horario as string) || '';
 
-  const tareas = useMemo(() => {
-    const hoy = new Date();
+  const tareasPorCurso = {
+    "Simulación": [
+      { tipo: "Exposición", codigo: "SIM01", horario: "8:00 AM", vencimiento: "Vence hoy" },
+      { tipo: "Tarea 2", codigo: "SIM02", horario: "9:30 AM", vencimiento: "Mañana" },
+    ],
+    "Mercadotecnia": [
+      { tipo: "Investigación", codigo: "MER01", horario: "10:00 AM", vencimiento: "Hoy" },
+      { tipo: "Práctica", codigo: "MER02", horario: "3:00 PM", vencimiento: "Mañana" },
+      { tipo: "Trabajo", codigo: "MER03", horario: "5:00 PM", vencimiento: "Lunes" },
+    ],
+    "Programación": [
+      { tipo: "Código", codigo: "PRO01", horario: "11:00 AM", vencimiento: "Viernes" },
+      { tipo: "Proyecto", codigo: "PRO03", horario: "4:00 PM", vencimiento: "Miércoles" },
+    ],
+    "Calidad de Software": [
+      { tipo: "Práctica", codigo: "CAL01", horario: "9:00 AM", vencimiento: "Hoy" },
+      { tipo: "Exposición", codigo: "CAL02", horario: "2:00 PM", vencimiento: "Viernes" },
+    ],
+    "Sistema Moviles": [
+      { tipo: "Tarea", codigo: "MOV01", horario: "10:00 AM", vencimiento: "Hoy" },
+      { tipo: "Práctica", codigo: "MOV02", horario: "1:30 PM", vencimiento: "Jueves" },
+    ],
+  };
 
-    const addDays = (d: Date, n: number) => {
-      const copy = new Date(d);
-      copy.setDate(copy.getDate() + n);
-      return copy;
+  const irCurso = (curso) => {
+    const rutas = {
+      "Simulación": "/cursos/simulacion",
+      "Mercadotecnia": "/cursos/mercadotecnia",
+      "Programación": "/cursos/programacion",
+      "Calidad de Software": "/cursos/calidad",
+      "Sistema Moviles": "/cursos/sistemamoviles",
     };
 
-    return [0, 1, 2].map((offset) => {
-      const fecha = addDays(hoy, offset);
-      return {
-        fecha,
-        diaNumero: fecha.getDate(),
-        diaNombre: diasSemana[fecha.getDay()],
-        tipo: 'TRABAJO EN CLASE',
-        codigo: '20251-XXXXX', 
-        horario: horarioCurso,
-        vencimiento:
-          offset === 0 ? 'VENCIMIENTO DE TAREA: HOY' : `VENCIMIENTO DE TAREA: EN ${offset} DÍA(s)`,
-      };
-    });
-  }, [nombreCurso, horarioCurso]);
+    if (rutas[curso]) {
+      router.push(rutas[curso]);
+    } else {
+      console.warn("Ruta no encontrada para:", curso);
+    }
+  };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
+
+      <TouchableOpacity 
+        style={styles.volverBtn} 
+        onPress={() => router.push("/Curso")}
+      >
+        <Ionicons name="arrow-back" size={22} color="black" />
+        <Text style={styles.volverText}>Volver</Text>
+      </TouchableOpacity>
+
       <View style={styles.header}>
-        <View style={styles.headerLeft}>
-          <TouchableOpacity onPress={() => router.push('/(tabs)/Curso')}>
-            <Ionicons name="arrow-back" size={22} color="#fff" />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Notificaciones</Text>
-        </View>
-
-        <View style={styles.headerRight}>
-          <Ionicons name="notifications-outline" size={24} color="#fff" />
-          <View style={styles.badge} />
-        </View>
+        <Ionicons name="notifications-outline" size={40} color="#00A152" />
+        <Text style={styles.headerTitle}>Notificación de Tarea</Text>
+        <Text style={styles.headerCode}>Código: AC2025</Text>
       </View>
 
-      <View style={styles.courseInfo}>
-        <Text style={styles.courseName}>{nombreCurso}</Text>
-        {horarioCurso ? <Text style={styles.courseHorario}>{horarioCurso}</Text> : null}
-      </View>
+      {Object.keys(tareasPorCurso).map((curso, index) => (
+        <View key={index}>
+          <Text style={styles.cursoTitulo}>{curso}</Text>
 
-      <View style={styles.filtersRow}>
-        <Text style={styles.filterText}>PENDIENTES</Text>
-        <View style={styles.todayPill}>
-          <Text style={styles.todayPillText}>HOY</Text>
-        </View>
-      </View>
-
-      <ScrollView contentContainerStyle={styles.listContainer}>
-        {tareas.map((t, idx) => (
-          <View key={idx} style={styles.dayBlock}>
-            <Text style={styles.dayNumber}>{t.diaNumero}</Text>
-            <Text style={styles.dayName}>{t.diaNombre}</Text>
-
-            <View style={styles.taskCard}>
+          {tareasPorCurso[curso].map((t, i) => (
+            <TouchableOpacity 
+              key={i}
+              style={styles.taskCard}
+              onPress={() => irCurso(curso)}
+            >
               <View style={styles.taskHeaderPill}>
                 <Text style={styles.taskHeaderText}>TAREA</Text>
               </View>
 
               <View style={styles.taskContent}>
-                <Ionicons
-                  name="document-text-outline"
-                  size={26}
+                <Ionicons 
+                  name="document-text-outline" 
+                  size={26} 
                   color="#00A152"
-                  style={{ marginRight: 10 }}
+                  style={{ marginRight: 10 }} 
                 />
+
                 <View style={{ flex: 1 }}>
                   <Text style={styles.taskType}>{t.tipo}</Text>
                   <Text style={styles.taskLine}>{t.codigo}</Text>
-                  <Text style={styles.taskLine}>{t.curso}</Text>
                   <Text style={styles.taskLine}>Horario: {t.horario}</Text>
                   <Text style={styles.taskDue}>{t.vencimiento}</Text>
                 </View>
               </View>
-            </View>
-          </View>
-        ))}
-      </ScrollView>
-    </View>
+            </TouchableOpacity>
+          ))}
+
+        </View>
+      ))}
+
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
+  container: { padding: 15, backgroundColor: "#fff" },
 
-  header: {
-    backgroundColor: '#4CAF50',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+  volverBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 15,
+    backgroundColor: "#4CAF50",
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    borderRadius: 8,
+    alignSelf: "flex-start",
   },
-  headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  headerTitle: { color: '#fff', fontSize: 18, fontWeight: 'bold', marginLeft: 4 },
-  headerRight: { flexDirection: 'row', alignItems: 'center' },
-
-  badge: {
-    position: 'absolute',
-    right: -2,
-    top: -2,
-    width: 10,
-    height: 10,
-    backgroundColor: '#ff1744',
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: '#4CAF50',
+  volverText: {
+    fontSize: 16,
+    fontWeight: "700",
+    marginLeft: 6,
+    color: "black",
   },
 
-  courseInfo: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-  },
-  courseName: { fontSize: 16, fontWeight: 'bold' },
-  courseHorario: { fontSize: 13, color: '#555', marginTop: 2 },
+  header: { alignItems: "center", marginBottom: 20 },
+  headerTitle: { fontSize: 20, fontWeight: "bold", marginTop: 5 },
+  headerCode: { fontSize: 14, color: "#777", marginTop: 3 },
 
-  filtersRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    alignItems: 'center',
+  cursoTitulo: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginTop: 20,
+    marginBottom: 10,
   },
-  filterText: { fontSize: 16, fontWeight: 'bold' },
-  todayPill: {
-    backgroundColor: '#4CAF50',
-    paddingHorizontal: 18,
-    paddingVertical: 6,
-    borderRadius: 20,
-  },
-  todayPillText: { color: '#fff', fontWeight: 'bold' },
-
-  listContainer: {
-    paddingHorizontal: 16,
-    paddingBottom: 20,
-  },
-
-  dayBlock: {
-    marginBottom: 18,
-  },
-  dayNumber: { fontSize: 18, fontWeight: 'bold' },
-  dayName: { fontSize: 14, fontWeight: 'bold', marginBottom: 6 },
 
   taskCard: {
-    backgroundColor: '#e5e5e5',
-    borderRadius: 8,
-    padding: 10,
+    backgroundColor: "#f3f3f3",
+    padding: 15,
+    borderRadius: 12,
+    marginBottom: 15,
+    borderWidth: 1,
+    borderColor: "#d9d9d9",
   },
-  taskHeaderPill: {
-    alignSelf: 'flex-start',
-    backgroundColor: '#4CAF50',
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 4,
-    marginBottom: 8,
-  },
-  taskHeaderText: { color: '#fff', fontWeight: 'bold' },
 
-  taskContent: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+  taskHeaderPill: {
+    backgroundColor: "#00A152",
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    alignSelf: "flex-start",
+    borderRadius: 50,
+    marginBottom: 10,
   },
-  taskType: { fontWeight: 'bold', marginBottom: 2, fontSize: 13 },
-  taskLine: { fontSize: 12 },
-  taskDue: { fontSize: 12, marginTop: 4, fontWeight: 'bold' },
+  taskHeaderText: { color: "white", fontWeight: "bold", fontSize: 12 },
+
+  taskContent: { flexDirection: "row", alignItems: "center" },
+
+  taskType: { fontSize: 18, fontWeight: "bold" },
+  taskLine: { fontSize: 14, color: "#777" },
+  taskDue: { marginTop: 5, fontSize: 14, color: "#e53935", fontWeight: "bold" },
 });
