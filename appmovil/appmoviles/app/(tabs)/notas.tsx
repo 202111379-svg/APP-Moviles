@@ -1,145 +1,268 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   SafeAreaView,
   ScrollView,
   View,
   Text,
-  StyleSheet
+  StyleSheet,
+  TouchableOpacity,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 
+type Evaluation = {
+  id: string;
+  description: string;
+  prefix: string;
+  grade: string;
+};
+
+type Course = {
+  id: string;
+  name: string;
+  time: string;
+  evaluations: Evaluation[];
+};
+
+const COURSES: Course[] = [
+  {
+    id: 'mercadotecnia',
+    name: 'MERCADOTECNIA',
+    time: '9:40 - 11:20',
+    evaluations: [
+      { id: '1', description: 'Parcial', prefix: 'PAR1', grade: '17' },
+      { id: '2', description: 'Final', prefix: 'FIN1', grade: 'No Registra' },
+      { id: '3', description: 'Taller', prefix: 'TLR1', grade: '16' },
+    ],
+  },
+  {
+    id: 'simulacion',
+    name: 'Simulación de Sistemas',
+    time: '5:00 - 7:40',
+    evaluations: [
+      { id: '1', description: 'Parcial', prefix: 'PAR1', grade: '18' },
+      { id: '2', description: 'Final', prefix: 'FIN1', grade: 'No Registra' },
+    ],
+  },
+  {
+    id: 'moviles',
+    name: 'Sistemas Móviles',
+    time: '7:50 - 9:30',
+    evaluations: [
+      { id: '1', description: 'Proyecto', prefix: 'PRY1', grade: '19' },
+      { id: '2', description: 'Taller', prefix: 'TLR1', grade: '15' },
+      { id: '3', description: 'Parcial', prefix: 'PAR1', grade: '16' },
+      { id: '4', description: 'Final', prefix: 'FIN1', grade: 'No Registra' },
+    ],
+  },
+  {
+    id: 'calidad',
+    name: 'Calidad de Software',
+    time: '3:00 - 4:40',
+    evaluations: [
+      { id: '1', description: 'Parcial', prefix: 'PAR1', grade: '16' },
+      { id: '2', description: 'Final', prefix: 'FIN1', grade: 'No Registra' },
+    ],
+  },
+  {
+    id: 'taller',
+    name: 'Taller de Programación',
+    time: '1:00 - 2:40',
+    evaluations: [
+      { id: '1', description: 'Taller 1', prefix: 'TLR1', grade: '17' },
+      { id: '2', description: 'Taller 2', prefix: 'TLR2', grade: '18' },
+      { id: '3', description: 'Taller 3', prefix: 'TLR3', grade: '18' },
+      { id: '4', description: 'Taller 4', prefix: 'TLR4', grade: '18' },
+    ],
+  },
+];
+
 export default function NotasScreen() {
-      const router = useRouter();
+  const router = useRouter();
+  const [openCourseId, setOpenCourseId] = useState<string | null>(null);
+
+  const toggleCourse = (id: string) => {
+    setOpenCourseId((curr) => (curr === id ? null : id));
+  };
+
   return (
     <SafeAreaView style={styles.safe}>
       <ScrollView contentContainerStyle={styles.container}>
 
-  <TouchableOpacity
-  style={styles.header}
-  onPress={() => router.push('/(tabs)/explore')}
-  activeOpacity={0.6}
->
-  <Ionicons name="arrow-back" size={22} color="#4CAF50" />
-  <Text style={styles.title}>CALCULA TUS PRÓXIMAS NOTAS</Text>
-</TouchableOpacity>
+        {/* HEADER VERDE */}
+        <View style={styles.header}>
+          <TouchableOpacity
+            onPress={() => router.push('/(tabs)/explore')}
+            activeOpacity={0.6}
+          >
+            <Ionicons name="arrow-back" size={26} color="#fff" />
+          </TouchableOpacity>
 
+          <View style={styles.headerLeft}>
+            <View style={styles.circle}>
+              <Text style={styles.circleText}>J</Text>
+            </View>
+            <View>
+              <Text style={styles.code}>202111359</Text>
+              <Text style={styles.welcome}>Hola, Bienvenido</Text>
+            </View>
+          </View>
 
-
-
-        {/* Promedios */}
-        <View style={styles.card}>
-          <Text style={styles.bigEmoji}>😁</Text>
-          <Text style={styles.promedioText}>
-            Promedio ponderado <Text style={styles.bold}>actual</Text> 14
-          </Text>
-          <Text style={styles.promedioSim}>
-            Promedio ponderado Simulado <Text style={styles.bold}>18.0</Text>
-          </Text>
+          <View style={styles.headerRight}>
+            <Ionicons name="mail-outline" size={22} color="#fff" />
+            <Ionicons
+              name="notifications-outline"
+              size={22}
+              color="#fff"
+              style={{ marginLeft: 12 }}
+            />
+            <TouchableOpacity style={{ marginLeft: 12 }}>
+              <Text style={styles.helpRight}>Ayuda →</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
-        {/* ITEM REUTILIZABLE */}
-        {[
-          { code: 'TA1', name: 'Tarea Académica 1', grade: 10, weight: '10%' },
-          { code: 'PC1', name: 'Práctica Calificada 1', grade: 20, weight: '10%' },
-          { code: 'TA2', name: 'Tarea Calificada 2', grade: 20, weight: '10%' },
-          { code: 'PC2', name: 'Práctica Calificada 2', grade: 20, weight: '10%' },
-          { code: 'EXFI', name: 'Examen Final', grade: 20, weight: '10%' },
-        ].map((item) => (
-          <View key={item.code} style={styles.itemCard}>
-            <View style={styles.row}>
-              <Text style={styles.itemCode}>{item.code}</Text>
-              <Text style={styles.itemName}>{item.name}</Text>
-              <Text style={styles.itemWeight}>{item.weight}</Text>
+        {/* TÍTULO */}
+        <View style={styles.coursesHeaderBar}>
+          <Text style={styles.coursesHeaderText}>NOTAS</Text>
+        </View>
+
+        {/* LISTA DE CURSOS */}
+        {COURSES.map((course) => {
+          const isOpen = openCourseId === course.id;
+          return (
+            <View key={course.id} style={styles.courseCard}>
+
+              {/* Fila del curso */}
+              <View style={styles.courseRow}>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.courseTitle}>Curso: {course.name}</Text>
+                  <Text style={styles.courseTime}>{course.time}</Text>
+                </View>
+
+                <TouchableOpacity
+                  style={styles.virtualPill}
+                  onPress={() => toggleCourse(course.id)}
+                >
+                  <Text style={styles.virtualText}>Notas</Text>
+                  <Ionicons
+                    name={isOpen ? 'chevron-up' : 'chevron-forward'}
+                    size={18}
+                    color="#fff"
+                    style={{ marginLeft: 5 }}
+                  />
+                </TouchableOpacity>
+              </View>
+
+              {/* Desplegable */}
+              {isOpen && (
+                <View style={styles.evalBox}>
+                  <View style={[styles.evalRow, styles.evalHeaderRow]}>
+                    <Text style={[styles.evalCellDesc, styles.evalHeaderText]}>
+                      Evaluación
+                    </Text>
+                    <Text style={[styles.evalCellPrefix, styles.evalHeaderText]}>
+                      Prefijo
+                    </Text>
+                    <Text style={[styles.evalCellGrade, styles.evalHeaderText]}>
+                      Nota
+                    </Text>
+                  </View>
+
+                  {course.evaluations.map((ev) => (
+                    <View key={ev.id} style={styles.evalRow}>
+                      <Text style={styles.evalCellDesc}>{ev.description}</Text>
+                      <Text style={styles.evalCellPrefix}>{ev.prefix}</Text>
+                      <Text style={styles.evalCellGrade}>{ev.grade}</Text>
+                    </View>
+                  ))}
+                </View>
+              )}
             </View>
-
-            <View style={styles.barContainer}>
-              <View style={[styles.barFill, { width: `${item.grade * 5}%` }]} />
-            </View>
-
-            <Text style={styles.gradeText}>{item.grade}</Text>
-          </View>
-        ))}
-
-        <Text style={styles.footerText}>
-          Tomar una captura de pantalla en caso que quieras guardar el cálculo.
-        </Text>
-
+          );
+        })}
       </ScrollView>
     </SafeAreaView>
   );
 }
 
+
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#4E342E' },
+  safe: { flex: 1, backgroundColor: '#f5f5f5' },
   container: { padding: 16 },
 
   header: {
+    backgroundColor: '#4CAF50',
+    borderRadius: 8,
+    padding: 14,
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 12,
+    justifyContent: 'space-between',
   },
-
-  title: {
-    color: '#4CAF50',
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
     marginLeft: 10,
+  },
+  circle: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: 'rgba(255,255,255,0.25)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 8,
+  },
+  circleText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
+  code: { color: '#fff', fontWeight: 'bold', fontSize: 14 },
+  welcome: { color: '#fff', fontSize: 11 },
+  headerRight: { flexDirection: 'row', alignItems: 'center' },
+  helpRight: { color: '#fff', fontWeight: '600', fontSize: 14 },
+
+  coursesHeaderBar: {
+    backgroundColor: '#4CAF50',
+    paddingVertical: 8,
+    borderRadius: 6,
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  coursesHeaderText: {
+    color: '#fff',
     fontWeight: 'bold',
     fontSize: 16,
   },
 
-  card: {
+  courseCard: {
     backgroundColor: '#fff',
-    padding: 20,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-
-  bigEmoji: { fontSize: 50, marginBottom: 10 },
-  promedioText: { fontSize: 14 },
-  promedioSim: { fontSize: 14, marginTop: 6 },
-  bold: { fontWeight: 'bold' },
-
-  itemCard: {
-    backgroundColor: '#fff',
+    borderRadius: 12,
     padding: 14,
-    borderRadius: 10,
-    marginBottom: 12,
+    marginBottom: 10,
   },
+  courseRow: { flexDirection: 'row', alignItems: 'center' },
+  courseTitle: { fontWeight: 'bold', fontSize: 14 },
+  courseTime: { fontSize: 12, color: '#555', marginTop: 2 },
 
-  row: {
+  virtualPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
-  },
-
-  itemCode: { fontWeight: 'bold', width: 50 },
-  itemName: { flex: 1 },
-  itemWeight: { fontWeight: 'bold', color: '#444' },
-
-  barContainer: {
-    width: '100%',
-    height: 8,
-    backgroundColor: '#eee',
-    borderRadius: 5,
-    overflow: 'hidden',
-    marginBottom: 6,
-  },
-  barFill: {
-    height: '100%',
     backgroundColor: '#4CAF50',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
   },
-  gradeText: {
-    fontWeight: 'bold',
-    alignSelf: 'flex-end',
-    marginTop: -4,
+  virtualText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 13,
   },
 
-  footerText: {
-    color: '#ddd',
-    fontSize: 12,
-    textAlign: 'center',
-    marginTop: 10,
-  },
+  evalBox: { marginTop: 10, borderTopWidth: 1, borderTopColor: '#eee' },
+  evalRow: { flexDirection: 'row', paddingVertical: 6 },
+  evalHeaderRow: { borderBottomWidth: 1, borderBottomColor: '#eee' },
+  evalHeaderText: { fontWeight: 'bold', fontSize: 12 },
+  evalCellDesc: { flex: 2, fontSize: 12 },
+  evalCellPrefix: { flex: 1, fontSize: 12, textAlign: 'center' },
+  evalCellGrade: { flex: 1, fontSize: 12, textAlign: 'right' },
 });
