@@ -1,5 +1,12 @@
 import React from 'react';
-import { View, Text, Button, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  Button,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -16,7 +23,9 @@ export default function Explore() {
 
   return (
     <View style={styles.container}>
+      {/* ================= HEADER ================= */}
       <View style={styles.header}>
+        {/* IZQUIERDA */}
         <View style={styles.headerLeft}>
           <View style={styles.logoCircle}>
             <Text style={styles.logo}>J</Text>
@@ -24,6 +33,7 @@ export default function Explore() {
           <Text style={styles.code}>202111368</Text>
         </View>
 
+        {/* DERECHA */}
         <View style={styles.headerRight}>
           <TouchableOpacity style={styles.iconButton}>
             <Ionicons name="person-outline" size={24} color="#fff" />
@@ -40,13 +50,14 @@ export default function Explore() {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => {}}>
+          {/* BOTÓN AYUDA → */}
+          <TouchableOpacity onPress={() => router.push('/(tabs)/ayuda')}>
             <Text style={styles.helpText}>Ayuda →</Text>
           </TouchableOpacity>
         </View>
       </View>
 
-      {/* Contenido */}
+      {/* ================= CLASES ================= */}
       <View style={styles.classContainer}>
         <Text style={styles.classTitle}>Ahora</Text>
 
@@ -65,25 +76,26 @@ export default function Explore() {
         <Button title="Ver mi horario" onPress={() => router.push('/(tabs)/horario')} />
       </View>
 
+      {/* ================= BOTÓN NOTAS ================= */}
       <View style={{ marginTop: 10 }}>
-        <Button
-          title="Ver mis Notas"
-          onPress={() => router.push('/(tabs)/notas')}
-        />
+        <Button title="Ver mis Notas" onPress={() => router.push('/(tabs)/notas')} />
       </View>
 
+      {/* ================= ANUNCIOS ================= */}
       <View style={styles.announcementContainer}>
         <Text style={styles.announcementTitle}>Anuncios</Text>
         <Text style={styles.announcementText}>¡Ahorra En Tus Cuotas!</Text>
         <Text style={styles.announcementSubtext}>
           Pagando hasta 1 día antes del vencimiento de cada cuota
         </Text>
+
         <Button
           title="Ver descuentos y calendario"
           onPress={() => router.push('/(tabs)/calendario')}
         />
       </View>
 
+      {/* ================= NAVIGATION BAR ================= */}
       <View style={styles.navContainer}>
         <TouchableOpacity
           style={styles.navButton}
@@ -118,11 +130,13 @@ export default function Explore() {
         </TouchableOpacity>
       </View>
 
-      
+      {/* CERRAR SESIÓN */}
       <Button title="Cerrar sesión" onPress={() => router.replace('/')} />
     </View>
   );
 }
+
+/* ===================== ESTILOS ===================== */
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, backgroundColor: '#f5f5f5' },
@@ -136,6 +150,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     justifyContent: 'space-between',
   },
+
   headerLeft: { flexDirection: 'row', alignItems: 'center' },
 
   logoCircle: {
@@ -147,11 +162,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginRight: 10,
   },
+
   logo: { fontSize: 18, color: '#fff', fontWeight: 'bold' },
 
   code: { fontSize: 16, color: '#fff' },
+
   headerRight: { flexDirection: 'row', alignItems: 'center' },
+
   iconButton: { marginLeft: 10 },
+
   helpText: { fontSize: 16, color: '#fff', marginLeft: 10 },
 
   badge: {
@@ -167,7 +186,9 @@ const styles = StyleSheet.create({
   },
 
   classContainer: { marginBottom: 30 },
+
   classTitle: { fontSize: 20, fontWeight: 'bold', marginBottom: 10 },
+
   classItem: {
     backgroundColor: '#fff',
     padding: 10,
@@ -176,13 +197,19 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ddd',
   },
+
   className: { fontSize: 16, fontWeight: 'bold' },
+
   classStatus: { color: 'green' },
+
   classTime: { fontSize: 14, color: '#888' },
 
   announcementContainer: { marginBottom: 30 },
+
   announcementTitle: { fontSize: 20, fontWeight: 'bold', marginBottom: 10 },
+
   announcementText: { fontSize: 16, fontWeight: 'bold', color: '#f60' },
+
   announcementSubtext: { fontSize: 14, color: '#888' },
 
   navContainer: {
@@ -192,6 +219,8 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     borderRadius: 8,
   },
+
   navButton: { alignItems: 'center' },
+
   navButtonText: { color: '#fff', fontSize: 12, marginTop: 5 },
 });

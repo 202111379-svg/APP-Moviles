@@ -43,7 +43,12 @@ export default function TabLayout() {
     title: 'Notas',
     href: null,
   }}
+  
+  
 />
+
     </Tabs>
+    
   );
+  
 }
