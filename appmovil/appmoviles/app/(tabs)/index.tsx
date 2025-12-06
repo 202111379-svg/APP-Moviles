@@ -17,8 +17,8 @@ import {
 } from 'firebase/auth';
 
 import { app } from '../../firebaseConfig';
-
 const auth = getAuth(app);
+
 
 export default function Index() {
   const router = useRouter();

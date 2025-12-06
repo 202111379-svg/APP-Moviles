@@ -23,9 +23,7 @@ export default function Explore() {
 
   return (
     <View style={styles.container}>
-      {/* ================= HEADER ================= */}
       <View style={styles.header}>
-        {/* IZQUIERDA */}
         <View style={styles.headerLeft}>
           <View style={styles.logoCircle}>
             <Text style={styles.logo}>J</Text>
@@ -33,7 +31,6 @@ export default function Explore() {
           <Text style={styles.code}>202111368</Text>
         </View>
 
-        {/* DERECHA */}
         <View style={styles.headerRight}>
           <TouchableOpacity style={styles.iconButton}>
             <Ionicons name="person-outline" size={24} color="#fff" />
@@ -50,14 +47,12 @@ export default function Explore() {
             </View>
           </TouchableOpacity>
 
-          {/* BOTÓN AYUDA → */}
           <TouchableOpacity onPress={() => router.push('/(tabs)/ayuda')}>
             <Text style={styles.helpText}>Ayuda →</Text>
           </TouchableOpacity>
         </View>
       </View>
 
-      {/* ================= CLASES ================= */}
       <View style={styles.classContainer}>
         <Text style={styles.classTitle}>Ahora</Text>
 
